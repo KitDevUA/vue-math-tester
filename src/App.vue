@@ -1,26 +1,26 @@
 <template>
 	<div id="app">
 		<div class="container pt-3 pb-3">
-			<h1 class="text-center">Математический тренажёр</h1>
-
+			<h1 class="text-center">Math Trainer</h1>
+			
 			<h2
 				v-if="appState == 'Question' || appState == 'Answer'"
 			>
 				{{ levelSettings[ curLevel ].levelTitle }}
 			</h2>
-
+			
 			<h6
 				v-if="appState == 'Question' || appState == 'Answer'"
 			>
-				Правильных: {{ stats.correct }} / Ошибок: {{ stats.error }}
+				Correct: {{ stats.correct }} / Errors: {{ stats.error }}
 			</h6>
-
+			
 			<h6
 				v-if="appState == 'Question' || appState == 'Answer'"
 			>
-				Время выполнения: {{ showTimer }} секунд
+				Time taken: {{ showTimer }} seconds
 			</h6>
-
+			
 			<div
 				v-if="appState == 'Question' || appState == 'Answer'"
 				class="progress"
@@ -37,13 +37,13 @@
 					{{ width.text }}
 				</div>
 			</div>
-
+			
 			<WelcomeScreen
 				v-if="appState == 'WelcomeScreen'"
 				@begin="begin"
 			>
 			</WelcomeScreen>
-
+			
 			<Question
 				v-else-if="appState == 'Question'"
 				:valMin="levelSettings[curLevel].valMin"
@@ -53,7 +53,7 @@
 				@answer="getedAnswer"
 			>
 			</Question>
-
+			
 			<Answer
 				v-if="appState == 'Answer'"
 				:result="answerResult"
@@ -62,7 +62,7 @@
 				@next="next"
 			>
 			</Answer>
-
+			
 			<ResultScreen
 				v-if="appState == 'ResultScreen'"
 				:correct="stats.correct"
@@ -73,7 +73,7 @@
 			</ResultScreen>
 		</div>
 		<div class="container pt-3 pb-3">
-			<h3>Настройки</h3>
+			<h3>Settings</h3>
 			<form>
 				<div class="form-check">
 					<input class="form-check-input" type="checkbox" value="" id="easyMode" v-model="easyMode">
@@ -100,91 +100,89 @@ export default {
 			},
 			levelSettings: [
 				{
-					levelTitle: 'Уровень 1',
+					levelTitle: 'Level 1',
 					valMin: 5,
 					valMax: 15,
 					questionQuantity: 3,
 					answerQuantity: 2,
 				},
 				{
-					levelTitle: 'Уровень 2',
+					levelTitle: 'Level 2',
 					valMin: 10,
 					valMax: 100,
 					questionQuantity: 4,
 					answerQuantity: 3,
 				},
 				{
-					levelTitle: 'Уровень 3',
+					levelTitle: 'Level 3',
 					valMin: 100,
 					valMax: 250,
 					questionQuantity: 5,
 					answerQuantity: 4,
 				},
 			],
-			easyMode:		false,
-
-			answerResult:	false,
-			answerCorrect:	false,
-			answerInTheLevel: 0, // количество пройденных вопросов на текущем уровне
-			tick:			false, // интервал для обновления времени
+			easyMode: false,
+			answerResult: false,
+			answerCorrect: false,
+			answerInTheLevel: 0, // number of completed questions at the current level
+			tick: false, // interval for time update
 		}
 	},
 	methods: {
-		begin() { // Начинаю новую игру
-			this.appState		= 'Question';
-			this.stats.correct	= 0;
-			this.stats.error	= 0;
-			this.stats.timer	= 0;
-			this.curLevel		= 0;
+		begin() { // Start a new game
+			this.appState = 'Question';
+			this.stats.correct = 0;
+			this.stats.error = 0;
+			this.stats.timer = 0;
+			this.curLevel = 0;
 			this.answerInTheLevel = 0;
-
-			this.timerStart(); // начинаю счёт времени
+			
+			this.timerStart(); // start the timer
 		},
-		getedAnswer(value) { // пользователь дал ответ
-			this.appState		= 'Answer';
-			this.answerResult	= value.result; // передаю true/false о правильности ответа
-			this.answerCorrect	= value.correct;
-
-			if ( value.result )
+		getedAnswer(value) { // user provided an answer
+			this.appState = 'Answer';
+			this.answerResult = value.result; // pass true/false about the answer's correctness
+			this.answerCorrect = value.correct;
+			
+			if (value.result)
 				this.stats.correct++;
 			else
 				this.stats.error++;
-
+			
 			this.answerInTheLevel++;
-			this.timerStop(); // Ставлю на паузу счёт времени до следующего вопроса
+			this.timerStop(); // Pause the timer until the next question
 		},
-		next() { // перехожу к следующему вопросу / уровню / концу игры
-			if ( this.answerInTheLevel < this.levelSettings[ this.curLevel ].questionQuantity ) {
-				this.appState		= 'Question';
-				this.timerStart(); // Возобновляю счёт времени
+		next() { // move to the next question/level/end of the game
+			if (this.answerInTheLevel < this.levelSettings[this.curLevel].questionQuantity) {
+				this.appState = 'Question';
+				this.timerStart(); // Resume the timer
 			}
 			else {
-				if ( this.curLevel + 1 < this.levelSettings.length ) {
+				if (this.curLevel + 1 < this.levelSettings.length) {
 					this.curLevel++;
 					this.answerInTheLevel = 0;
-					this.appState		= 'Question';
-					this.timerStart(); // Возобновляю счёт времени
+					this.appState = 'Question';
+					this.timerStart(); // Resume the timer
 				}
 				else {
-					this.appState		= 'ResultScreen';
-					this.timerStop(); // Останавливаю счёт времени
+					this.appState = 'ResultScreen';
+					this.timerStop(); // Stop the timer
 				}
 			}
 		},
-
 		timerStart() {
-			this.tick = setInterval( function() {
+			this.tick = setInterval(function() {
 				this.stats.timer++
 			}.bind(this), 1000);
 		},
 		timerStop() {
-			clearInterval( this.tick );
+			clearInterval(this.tick);
 		},
 	},
 	computed: {
 		width() {
 			let w	= Math.round( (100 / this.levelSettings[this.curLevel].questionQuantity) * this.answerInTheLevel );
-
+			
 			return {
 				text: w + '%',
 				style: {
@@ -194,16 +192,16 @@ export default {
 		},
 		buttonText() {
 			let text = '';
-
+			
 			if ( this.answerInTheLevel < this.levelSettings[ this.curLevel ].questionQuantity )
-				text = 'Следующий вопрос';
+				text = 'Next question';
 			else {
 				if ( this.curLevel + 1 < this.levelSettings.length )
-					text = 'Следующий уровень';
+					text = 'Next level';
 				else
-					text = 'Результаты';
+					text = 'Results';
 			}
-
+			
 			return text;
 		},
 		showTimer() {
@@ -221,8 +219,4 @@ body
 			background: #fff
 		.space
 			min-height: 200px
-			//display: flex
-			//flex-direction: column
-			//justify-content: center
-			//align-items: center
 </style>
