@@ -68,7 +68,7 @@
 				:correct="stats.correct"
 				:error="stats.error"
 				:timer="stats.timer"
-				@fromBegin="begin"
+				@restart="begin"
 			>
 			</ResultScreen>
 		</div>

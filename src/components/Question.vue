@@ -13,8 +13,26 @@
 
 <script>
 export default {
-	props: ['valMin', 'valMax', 'answerQuantity', 'easyMode'],
-	data () {
+	props: {
+		valMin: {
+			type: Number,
+			required: true
+		},
+		valMax: {
+			type: Number,
+			required: true
+		},
+		answerQuantity: {
+			type: Number,
+			required: true
+		},
+		easyMode: {
+			type: Boolean,
+			default: false
+		}
+	},
+	emits: ['answer'],
+	data() {
 		return {
 			x: randomQuestion(this.valMin, this.valMax),
 			y: randomQuestion(this.valMin, this.valMax),
@@ -23,7 +41,7 @@ export default {
 	methods: {
 		choice(answer) {
 			this.$emit( 'answer', {
-				result:		answer == this.correct, // true | false
+				result:		answer == this.correct,
 				correct:	this.x + ' + ' + this.y + ' = ' + this.correct,
 			} );
 		},
@@ -35,18 +53,18 @@ export default {
 		answers() {
 			let arr		= [ this.correct ],
 				newVal	= false;
-
+			
 			while (arr.length < this.answerQuantity) {
 				newVal	= randomAnswer(this.correct, 10);
-
+				
 				if (arr.indexOf(newVal) === -1)
 					arr.push(newVal);
 			}
-
+			
 			arr.sort(function(a, b) {
 				return Math.random() - 0.5;
 			});
-
+			
 			return arr;
 		},
 	},

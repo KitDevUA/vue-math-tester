@@ -13,15 +13,29 @@
 
 <script>
 export default {
-	props: ['result', 'correct', 'buttonText'],
-	data () {
+	props: {
+		result: {
+			type: Boolean,
+			required: true
+		},
+		correct: {
+			type: String,
+			required: true
+		},
+		buttonText: {
+			type: String,
+			required: true
+		}
+	},
+	emits: ['next'],
+	data() {
 		return {
-
+			
 		}
 	},
 	methods: {
 		next() {
-			this.$emit( 'next' );
+			this.$emit('next');
 		},
 	},
 }
