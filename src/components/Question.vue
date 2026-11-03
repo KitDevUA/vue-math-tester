@@ -85,7 +85,7 @@ function randomAnswer(correct, deviation) { // deviation def: 10%
 </script>
 
 <style lang="sass">
-	.btn
-		margin-left: 10px
-		margin-right: 10px
+.btn
+	margin-left: 10px
+	margin-right: 10px
 </style>
